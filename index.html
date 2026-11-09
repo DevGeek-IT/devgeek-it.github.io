@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <!-- ============ МЕТА-ДАННЫЕ ДОКУМЕНТА ============ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DevGeek.IT — специалист по информационной безопасности Windows-сред, системному администрированию, автоматизации на PowerShell и разработке инструментов.">
+    <meta name="author" content="DevGeek.IT">
+    <title>DevGeek.IT — Информационная безопасность и разработка</title>
+
+    <!-- 🛡️ Cloudflare Turnstile: подключение скрипта капчи -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <style>
+        /* ==========================================================
+           1. ПЕРЕМЕННЫЕ (CSS Custom Properties)
+        ========================================================== */
+        :root {
+            --color-bg: #0a0e17;
+            --color-bg-secondary: #0f1420;
+            --color-bg-card: #121829;
+            --color-bg-card-hover: #161e33;
+            --color-border: #1f2940;
+            --color-border-light: #2a3650;
+
+            --color-accent-primary: #35c5c2;
+            --color-accent-secondary: #7c6ff0;
+            --color-accent-gradient: linear-gradient(135deg, #35c5c2 0%, #7c6ff0 100%);
+
+            --color-text-primary: #e8edf7;
+            --color-text-secondary: #a3afc7;
+            --color-text-muted: #6b7690;
+
+            --color-success: #3ecf8e;
+            --color-error: #ef5b5b;
+
+            --font-main: 'Segoe UI', 'Arial', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Consolas', 'Courier New', monospace;
+
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            --space-2xl: 6rem;
+
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 32px rgba(53, 197, 194, 0.15);
+
+            --container-width: 1180px;
+
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.35s ease;
+            --transition-slow: 0.6s ease;
+
+            /* Цвета брендов */
+            --color-max: #7c6ff0;
+            --color-max-dark: #5a4fd1;
+            --color-email: #6d4aff;
+            --color-email-dark: #4a2fd1;
+        }
+
+        /* ==========================================================
+           2. СБРОС СТИЛЕЙ
+        ========================================================== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        img, svg {
+            display: block;
+            max-width: 100%;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        ul, ol {
+            list-style: none;
+        }
+
+        input, textarea, select {
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        /* ==========================================================
+           3. БАЗОВЫЕ СТИЛИ
+        ========================================================== */
+        body {
+            font-family: var(--font-main);
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 15% 10%, rgba(124, 111, 240, 0.08), transparent 40%),
+                radial-gradient(circle at 85% 25%, rgba(53, 197, 194, 0.07), transparent 45%);
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            line-height: 1.25;
+            color: var(--color-text-primary);
+        }
+
+        h2.section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            margin-bottom: var(--space-xs);
+        }
+
+        .section-subtitle {
+            color: var(--color-text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: var(--space-lg);
+            max-width: 640px;
+        }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        section {
+            padding: var(--space-2xl) 0;
+        }
+
+        .text-gradient {
+            background: var(--color-accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 24px;
+            height: 2px;
+            background: var(--color-accent-gradient);
+            display: inline-block;
+        }
+
+        /* ==========================================================
+           4. НАВИГАЦИЯ (ШАПКА САЙТА)
+        ========================================================== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: var(--space-sm) 0;
+            transition: background-color var(--transition-normal), box-shadow var(--transition-normal), backdrop-filter var(--transition-normal);
+            background-color: transparent;
+        }
+
+        .header.header--scrolled {
+            background-color: rgba(10, 14, 23, 0.85);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav__logo {
+            font-weight: 800;
+            font-size: 1.3rem;
+            letter-spacing: -0.02em;
+        }
+
+        .nav__logo span {
+            color: var(--color-accent-primary);
+        }
+
+        .nav__group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .nav__list {
+            display: flex;
+            gap: var(--space-lg);
+        }
+
+        .nav__link {
+            position: relative;
+            font-size: 0.95rem;
+            color: var(--color-text-secondary);
+            padding: 0.4rem 0;
+            transition: color var(--transition-fast);
+        }
+
+        .nav__link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-accent-gradient);
+            transition: width var(--transition-fast);
+        }
+
+        .nav__link:hover,
+        .nav__link.active {
+            color: var(--color-text-primary);
+        }
+
+        .nav__link.active::after,
+        .nav__link:hover::after {
+            width: 100%;
+        }
+
+        /* -------- Кнопка MAX в шапке -------- */
+        .nav__max-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 1rem;
+            border-radius: 999px;
+            background-color: rgba(124, 111, 240, 0.1);
+            border: 1px solid rgba(124, 111, 240, 0.35);
+            color: var(--color-text-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .nav__max-btn:hover {
+            background-color: rgba(124, 111, 240, 0.22);
+            border-color: var(--color-max);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(124, 111, 240, 0.25);
+        }
+
+        .nav__max-logo {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .nav__max-text {
+            line-height: 1;
+        }
+
+        /* -------- Кнопка EMAIL в шапке -------- */
+        .nav__email-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 1rem;
+            border-radius: 999px;
+            background-color: rgba(109, 74, 255, 0.1);
+            border: 1px solid rgba(109, 74, 255, 0.35);
+            color: var(--color-text-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .nav__email-btn:hover {
+            background-color: rgba(109, 74, 255, 0.22);
+            border-color: var(--color-email);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(109, 74, 255, 0.25);
+        }
+
+        .nav__email-logo {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .nav__email-text {
+            line-height: 1;
+        }
+
+        /* Кнопка-гамбургер для мобильного меню */
+        .nav__burger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 32px;
+            height: 32px;
+            z-index: 1100;
+        }
+
+        .nav__burger span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--color-text-primary);
+            border-radius: 2px;
+            transition: transform var(--transition-fast), opacity var(--transition-fast);
+        }
+
+        .nav__burger.is-active span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+        .nav__burger.is-active span:nth-child(2) {
+            opacity: 0;
+        }
+        .nav__burger.is-active span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* ==========================================================
+           5. HERO-СЕКЦИЯ
+        ========================================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 100px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(124, 111, 240, 0.12), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero__content {
+            max-width: 780px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero__greeting {
+            font-family: var(--font-mono);
+            color: var(--color-accent-primary);
+            font-size: 0.95rem;
+            margin-bottom: var(--space-sm);
+            display: inline-block;
+        }
+
+        .hero__title {
+            font-size: clamp(2.4rem, 6vw, 4.2rem);
+            margin-bottom: var(--space-sm);
+            letter-spacing: -0.02em;
+        }
+
+        .hero__subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            margin-bottom: var(--space-md);
+        }
+
+        .hero__description {
+            font-size: 1.05rem;
+            color: var(--color-text-secondary);
+            max-width: 640px;
+            margin-bottom: var(--space-lg);
+        }
+
+        .hero__typing {
+            font-family: var(--font-mono);
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-lg);
+            min-height: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hero__typing-label {
+            color: var(--color-text-muted);
+        }
+
+        .hero__typing-text {
+            color: var(--color-accent-secondary);
+            font-weight: 600;
+        }
+
+        .hero__cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.1em;
+            background: var(--color-accent-primary);
+            animation: blink 0.9s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .hero__actions {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        /* ==========================================================
+           6. КНОПКИ
+        ========================================================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 1.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.98rem;
+            font-weight: 600;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .btn--primary {
+            background: var(--color-accent-gradient);
+            color: #06101a;
+        }
+
+        .btn--primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn--outline {
+            border: 1px solid var(--color-border-light);
+            color: var(--color-text-primary);
+        }
+
+        .btn--outline:hover {
+            border-color: var(--color-accent-primary);
+            background-color: rgba(53, 197, 194, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .btn--full {
+            width: 100%;
+        }
+
+        /* Кнопка MAX */
+        .btn--max {
+            background-color: rgba(124, 111, 240, 0.1);
+            border: 1px solid var(--color-max);
+            color: var(--color-text-primary);
+        }
+
+        .btn--max:hover {
+            background-color: rgba(124, 111, 240, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 0 24px rgba(124, 111, 240, 0.25);
+            border-color: var(--color-max);
+        }
+
+        .btn__max-logo {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        /* Кнопка EMAIL */
+        .btn__email-logo {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        /* ==========================================================
+           7. СЕКЦИЯ "ОБО МНЕ"
+        ========================================================== */
+        .about {
+            background-color: var(--color-bg-secondary);
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .about__grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-xl);
+        }
+
+        .about__text p {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-sm);
+            font-size: 1.05rem;
+        }
+
+        .about__perks {
+            display: grid;
+            gap: var(--space-sm);
+        }
+
+        .perk {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            transition: border-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .perk:hover {
+            border-color: var(--color-accent-primary);
+            transform: translateX(4px);
+        }
+
+        .perk__icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--color-accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .perk__text {
+            color: var(--color-text-secondary);
+            font-size: 0.98rem;
+            padding-top: 0.3rem;
+        }
+
+        /* ==========================================================
+           8. СЕКЦИЯ "УСЛУГИ"
+        ========================================================== */
+        .services__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .card {
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg) var(--space-md);
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal), background-color var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--color-accent-gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition-normal);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-border-light);
+            background-color: var(--color-bg-card-hover);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card__icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background-color: rgba(53, 197, 194, 0.1);
+            border: 1px solid rgba(53, 197, 194, 0.25);
+            margin-bottom: var(--space-sm);
+        }
+
+        .card__title {
+            font-size: 1.15rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .card__text {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ==========================================================
+           9. СЕКЦИЯ "ТЕХНОЛОГИИ"
+        ========================================================== */
+        .tech__categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .tech-category {
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+        }
+
+        .tech-category__title {
+            font-size: 1rem;
+            color: var(--color-accent-primary);
+            margin-bottom: var(--space-sm);
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .tech-tag {
+            padding: 0.45rem 0.9rem;
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-light);
+            border-radius: 999px;
+            font-size: 0.9rem;
+            color: var(--color-text-primary);
+            transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+            cursor: default;
+        }
+
+        .tech-tag:hover {
+            background: var(--color-accent-gradient);
+            color: #06101a;
+            font-weight: 600;
+            border-color: transparent;
+            transform: scale(1.06);
+        }
+
+        /* ==========================================================
+           10. СЕКЦИЯ "ЧЕМ МОГУ БЫТЬ ПОЛЕЗЕН"
+        ========================================================== */
+        .useful {
+            background-color: var(--color-bg-secondary);
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .useful__list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .useful-item {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: flex-start;
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--color-border-light);
+            transition: border-color var(--transition-fast), background-color var(--transition-fast);
+        }
+
+        .useful-item:hover {
+            border-color: var(--color-accent-secondary);
+            background-color: rgba(124, 111, 240, 0.05);
+            border-style: solid;
+        }
+
+        .useful-item__number {
+            font-family: var(--font-mono);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--color-accent-secondary);
+            opacity: 0.6;
+            flex-shrink: 0;
+        }
+
+        .useful-item__text {
+            color: var(--color-text-secondary);
+            font-size: 0.98rem;
+            padding-top: 0.2rem;
+        }
+
+        /* ==========================================================
+           11. СЕКЦИЯ "КОНТАКТЫ" + ФОРМА
+        ========================================================== */
+        .contact__grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-xl);
+        }
+
+        .contact__cta {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .contact__cta h2 {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            margin-bottom: var(--space-sm);
+        }
+
+        .contact__cta p {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-lg);
+            max-width: 480px;
+        }
+
+        .contact__info {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .contact__info-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            transition: border-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .contact__info-item:hover {
+            border-color: var(--color-border-light);
+            transform: translateX(4px);
+        }
+
+        .contact__info-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            background: var(--color-accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Иконка MAX */
+        .contact__info-icon--max {
+            background: linear-gradient(135deg, var(--color-max) 0%, var(--color-max-dark) 100%);
+        }
+
+        .contact__max-logo {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Иконка EMAIL (Proton Mail) */
+        .contact__info-icon--email {
+            background: linear-gradient(135deg, var(--color-email) 0%, var(--color-email-dark) 100%);
+        }
+
+        .contact__email-logo {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .contact__info-label {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .contact__info-value {
+            color: var(--color-text-primary);
+            font-weight: 600;
+            transition: color var(--transition-fast);
+        }
+
+        .contact__info-item:hover .contact__info-value {
+            color: var(--color-accent-primary);
+        }
+
+        .contact__info-note {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--color-text-muted);
+            margin-top: 0.15rem;
+        }
+
+        .contact__actions {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        /* Форма обратной связи */
+        .contact-form {
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 0.8rem 1rem;
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-accent-primary);
+            box-shadow: 0 0 0 3px rgba(53, 197, 194, 0.15);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-error {
+            font-size: 0.82rem;
+            color: var(--color-error);
+            min-height: 1.1em;
+        }
+
+        .form-group input.is-invalid,
+        .form-group textarea.is-invalid {
+            border-color: var(--color-error);
+        }
+
+        .btn[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Honeypot-поле: скрыто от людей, но видно ботам */
+        .form-honeypot {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+
+        /* Контейнер для виджета Turnstile */
+        .cf-turnstile {
+            margin: var(--space-sm) 0;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: var(--space-lg);
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-success);
+            color: var(--color-text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-normal), transform var(--transition-normal);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.is-visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        .toast.toast--error {
+            border-color: var(--color-error);
+        }
+
+        /* ==========================================================
+           12. FOOTER
+        ========================================================== */
+        .footer {
+            background-color: var(--color-bg-secondary);
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-xl) 0 var(--space-md);
+        }
+
+        .footer__grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+
+        .footer__brand .nav__logo {
+            display: inline-block;
+            margin-bottom: var(--space-xs);
+        }
+
+        .footer__brand p {
+            color: var(--color-text-secondary);
+            max-width: 420px;
+            font-size: 0.95rem;
+        }
+
+        .footer__links-title {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-sm);
+        }
+
+        .footer__links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .footer__links a {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            transition: color var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .footer__links a:hover {
+            color: var(--color-accent-primary);
+        }
+
+        .footer__max-logo,
+        .footer__email-logo {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .footer__bottom {
+            border-top: 1px solid var(--color-border);
+            padding-top: var(--space-md);
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 0.88rem;
+        }
+
+        /* ==========================================================
+           13. КНОПКА "НАВЕРХ"
+        ========================================================== */
+        .scroll-top {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--color-accent-gradient);
+            color: #06101a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity var(--transition-normal), transform var(--transition-normal), visibility var(--transition-normal);
+            z-index: 900;
+        }
+
+        .scroll-top.is-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-4px);
+        }
+
+        /* ==========================================================
+           14. Плавающая кнопка MAX
+        ========================================================== */
+        .max-fab {
+            position: fixed;
+            bottom: calc(var(--space-lg) + 60px);
+            right: var(--space-lg);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-max) 0%, var(--color-max-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(124, 111, 240, 0.4);
+            z-index: 950;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+            animation: maxFabPulse 2.5s ease-in-out infinite;
+        }
+
+        .max-fab:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(124, 111, 240, 0.6);
+            animation-play-state: paused;
+        }
+
+        .max-fab img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        @keyframes maxFabPulse {
+            0%, 100% {
+                box-shadow: 0 8px 24px rgba(124, 111, 240, 0.4);
+            }
+            50% {
+                box-shadow: 0 8px 32px rgba(124, 111, 240, 0.7);
+            }
+        }
+
+        /* ==========================================================
+           15. АНИМАЦИИ ПОЯВЛЕНИЯ
+        ========================================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.08s; }
+        .reveal-delay-2 { transition-delay: 0.16s; }
+        .reveal-delay-3 { transition-delay: 0.24s; }
+        .reveal-delay-4 { transition-delay: 0.32s; }
+        .reveal-delay-5 { transition-delay: 0.4s; }
+        .reveal-delay-6 { transition-delay: 0.48s; }
+
+        /* ==========================================================
+           16. АДАПТИВНОСТЬ
+        ========================================================== */
+        @media (min-width: 640px) {
+            .hero__actions {
+                flex-wrap: nowrap;
+            }
+        }
+
+        @media (min-width: 900px) {
+            .about__grid {
+                grid-template-columns: 1.1fr 0.9fr;
+                align-items: center;
+            }
+
+            .contact__grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer__grid {
+                grid-template-columns: 2fr 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .nav__list {
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                width: min(78vw, 320px);
+                background-color: var(--color-bg-secondary);
+                border-left: 1px solid var(--color-border);
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: var(--space-md);
+                padding: var(--space-xl) var(--space-lg);
+                transform: translateX(100%);
+                transition: transform var(--transition-normal);
+                z-index: 1050;
+                box-shadow: var(--shadow-lg);
+            }
+
+            .nav__list.is-open {
+                transform: translateX(0);
+            }
+
+            .nav__burger {
+                display: flex;
+            }
+
+            .nav__overlay {
+                position: fixed;
+                inset: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity var(--transition-normal), visibility var(--transition-normal);
+                z-index: 1040;
+            }
+
+            .nav__overlay.is-open {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav__max-text,
+            .nav__email-text {
+                display: none;
+            }
+            .nav__max-btn,
+            .nav__email-btn {
+                padding: 0.5rem;
+                width: 40px;
+                height: 40px;
+                justify-content: center;
+            }
+            .nav__group {
+                gap: var(--space-sm);
+            }
+        }
+
+        @media (max-width: 480px) {
+            section {
+                padding: var(--space-xl) 0;
+            }
+
+            .scroll-top {
+                width: 42px;
+                height: 42px;
+                right: var(--space-sm);
+                bottom: var(--space-sm);
+            }
+
+            .max-fab {
+                width: 50px;
+                height: 50px;
+                right: var(--space-sm);
+                bottom: calc(var(--space-sm) + 54px);
+            }
+
+            .max-fab img {
+                width: 26px;
+                height: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================================
+         ШАПКА САЙТА
+    =========================================================== -->
+    <header class="header" id="header">
+        <div class="container nav">
+            <a href="#hero" class="nav__logo" aria-label="DevGeek.IT — на главную">Dev<span>Geek</span>.IT</a>
+
+            <div class="nav__overlay" id="navOverlay"></div>
+
+            <div class="nav__group">
+                <nav aria-label="Основная навигация">
+                    <ul class="nav__list" id="navList">
+                        <li><a href="#about" class="nav__link" data-nav-link>Обо мне</a></li>
+                        <li><a href="#services" class="nav__link" data-nav-link>Услуги</a></li>
+                        <li><a href="#tech" class="nav__link" data-nav-link>Технологии</a></li>
+                        <li><a href="#useful" class="nav__link" data-nav-link>Польза</a></li>
+                        <li><a href="#contact" class="nav__link" data-nav-link>Контакты</a></li>
+                    </ul>
+                </nav>
+
+                <!-- ✅ Кнопка EMAIL в шапке -->
+                <a
+                    href="mailto:DevGeek.IT@proton.me"
+                    class="nav__email-btn"
+                    aria-label="Написать на email"
+                >
+                    <img
+                        src="https://trace-logos.ru/assets/logos/svgs/proton-mail.svg"
+                        alt=""
+                        class="nav__email-logo"
+                        aria-hidden="true"
+                        loading="lazy"
+                    >
+                    <span class="nav__email-text">EMAIL</span>
+                </a>
+
+                <!-- ✅ Кнопка MAX в шапке -->
+                <a
+                    href="https://max.ru/join/hYEYNbqt80uABpKRbTYQ0CYFy-RHRXJluNRuTSGqPDE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="nav__max-btn"
+                    aria-label="Написать в MAX"
+                >
+                    <img
+                        src="https://trace-logos.ru/assets/logos/svgs/max.svg"
+                        alt=""
+                        class="nav__max-logo"
+                        aria-hidden="true"
+                        loading="lazy"
+                    >
+                    <span class="nav__max-text">MAX</span>
+                </a>
+
+                <button class="nav__burger" id="navBurger" aria-label="Открыть меню навигации" aria-expanded="false" aria-controls="navList">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO -->
+        <section class="hero" id="hero">
+            <div class="container hero__content">
+                <span class="hero__greeting">// привет, это</span>
+                <h1 class="hero__title">Dev<span class="text-gradient">Geek</span>.IT</h1>
+                <p class="hero__subtitle">Специалист по информационной безопасности и разработке</p>
+
+                <p class="hero__description">
+                    Более 20 лет опыта работы с экосистемой Windows — от Windows XP до современных версий.
+                    Основной фокус: защита Windows-сред, анализ угроз, системное администрирование
+                    и разработка инструментов автоматизации.
+                </p>
+
+                <div class="hero__typing" aria-live="polite">
+                    <span class="hero__typing-label">Фокус:</span>
+                    <span class="hero__typing-text" id="typingText"></span><span class="hero__cursor"></span>
+                </div>
+
+                <div class="hero__actions">
+                    <a href="#contact" class="btn btn--primary">Связаться</a>
+                    <a href="#services" class="btn btn--outline">Посмотреть услуги</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ОБО МНЕ -->
+        <section class="about" id="about">
+            <div class="container">
+                <div class="about__grid">
+                    <article class="about__text reveal">
+                        <span class="eyebrow">Обо мне</span>
+                        <h2 class="section-title">Кто я и чем занимаюсь</h2>
+                        <p>
+                            Специалист по информационной безопасности и разработке с более чем 20-летним опытом
+                            работы с экосистемой Windows — начиная с Windows XP.
+                        </p>
+                        <p>
+                            Основной фокус — защита Windows-сред, анализ угроз, системное администрирование
+                            и разработка инструментов для автоматизации.
+                        </p>
+                        <p>Также занимаюсь созданием веб- и desktop-решений.</p>
+                    </article>
+
+                    <div class="about__perks">
+                        <div class="perk reveal reveal-delay-1">
+                            <span class="perk__icon" aria-hidden="true">🛡️</span>
+                            <span class="perk__text">Практический опыт в защите Windows-инфраструктуры</span>
+                        </div>
+                        <div class="perk reveal reveal-delay-2">
+                            <span class="perk__icon" aria-hidden="true">🔍</span>
+                            <span class="perk__text">Анализ инцидентов и подозрительной активности</span>
+                        </div>
+                        <div class="perk reveal reveal-delay-3">
+                            <span class="perk__icon" aria-hidden="true">⚙️</span>
+                            <span class="perk__text">Автоматизация административных задач</span>
+                        </div>
+                        <div class="perk reveal reveal-delay-4">
+                            <span class="perk__icon" aria-hidden="true">🧩</span>
+                            <span class="perk__text">Разработка утилит, скриптов и внутренних инструментов</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- УСЛУГИ -->
+        <section class="services" id="services">
+            <div class="container">
+                <span class="eyebrow reveal">Что я предлагаю</span>
+                <h2 class="section-title reveal">Услуги</h2>
+                <p class="section-subtitle reveal">
+                    Спектр задач — от защиты инфраструктуры до разработки собственных инструментов автоматизации.
+                </p>
+
+                <div class="services__grid">
+                    <article class="card reveal reveal-delay-1">
+                        <div class="card__icon" aria-hidden="true">🛡️</div>
+                        <h3 class="card__title">Защита Windows-сред</h3>
+                        <p class="card__text">Защита рабочих станций и серверных сред Windows от современных угроз.</p>
+                    </article>
+
+                    <article class="card reveal reveal-delay-2">
+                        <div class="card__icon" aria-hidden="true">🦠</div>
+                        <h3 class="card__title">Анализ инцидентов</h3>
+                        <p class="card__text">Анализ вредоносного ПО, инцидентов и подозрительной активности в инфраструктуре.</p>
+                    </article>
+
+                    <article class="card reveal reveal-delay-3">
+                        <div class="card__icon" aria-hidden="true">🔒</div>
+                        <h3 class="card__title">Hardening и контроль доступа</h3>
+                        <p class="card__text">Hardening Windows, контроль доступа и минимизация поверхности атаки.</p>
+                    </article>
+
+                    <article class="card reveal reveal-delay-4">
+                        <div class="card__icon" aria-hidden="true">🖥️</div>
+                        <h3 class="card__title">Администрирование инфраструктуры</h3>
+                        <p class="card__text">Администрирование, диагностика и автоматизация Windows-инфраструктуры.</p>
+                    </article>
+
+                    <article class="card reveal reveal-delay-5">
+                        <div class="card__icon" aria-hidden="true">⌨️</div>
+                        <h3 class="card__title">PowerShell-скрипты</h3>
+                        <p class="card__text">Скрипты для безопасности, аудита и автоматизации рутинных задач.</p>
+                    </article>
+
+                    <article class="card reveal reveal-delay-6">
+                        <div class="card__icon" aria-hidden="true">💻</div>
+                        <h3 class="card__title">Разработка инструментов</h3>
+                        <p class="card__text">Скрипты, утилиты, веб-интерфейсы и desktop-решения под конкретные задачи.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ТЕХНОЛОГИИ -->
+        <section class="tech" id="tech">
+            <div class="container">
+                <span class="eyebrow reveal">Инструментарий</span>
+                <h2 class="section-title reveal">Технологии</h2>
+                <p class="section-subtitle reveal">
+                    Набор технологий и инструментов, которые применяются в повседневной работе.
+                </p>
+
+                <div class="tech__categories">
+                    <div class="tech-category reveal reveal-delay-1">
+                        <h3 class="tech-category__title">Безопасность</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Windows Security</span>
+                            <span class="tech-tag">Hardening</span>
+                            <span class="tech-tag">Incident Analysis</span>
+                            <span class="tech-tag">PowerShell</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-category reveal reveal-delay-2">
+                        <h3 class="tech-category__title">Автоматизация</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">PowerShell</span>
+                            <span class="tech-tag">Python</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-category reveal reveal-delay-3">
+                        <h3 class="tech-category__title">Системная разработка</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Rust</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-category reveal reveal-delay-4">
+                        <h3 class="tech-category__title">Веб-разработка</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">HTML</span>
+                            <span class="tech-tag">CSS</span>
+                            <span class="tech-tag">JavaScript</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-category reveal reveal-delay-5">
+                        <h3 class="tech-category__title">Прочее</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Git</span>
+                            <span class="tech-tag">GitHub</span>
+                            <span class="tech-tag">Windows Server</span>
+                            <span class="tech-tag">Командная строка</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ЧЕМ МОГУ БЫТЬ ПОЛЕЗЕН -->
+        <section class="useful" id="useful">
+            <div class="container">
+                <span class="eyebrow reveal">Практическая польза</span>
+                <h2 class="section-title reveal">Чем могу быть полезен</h2>
+                <p class="section-subtitle reveal">
+                    Практические сценарии, в которых мой опыт приносит конкретный результат.
+                </p>
+
+                <div class="useful__list">
+                    <div class="useful-item reveal reveal-delay-1">
+                        <span class="useful-item__number">01</span>
+                        <span class="useful-item__text">Разработка скриптов и утилит для Windows</span>
+                    </div>
+                    <div class="useful-item reveal reveal-delay-2">
+                        <span class="useful-item__number">02</span>
+                        <span class="useful-item__text">Аудит настроек безопасности и рекомендации по защите</span>
+                    </div>
+                    <div class="useful-item reveal reveal-delay-3">
+                        <span class="useful-item__number">03</span>
+                        <span class="useful-item__text">Автоматизация рутинных административных задач</span>
+                    </div>
+                    <div class="useful-item reveal reveal-delay-4">
+                        <span class="useful-item__number">04</span>
+                        <span class="useful-item__text">Создание небольших веб-интерфейсов и внутренних инструментов</span>
+                    </div>
+                    <div class="useful-item reveal reveal-delay-5">
+                        <span class="useful-item__number">05</span>
+                        <span class="useful-item__text">Помощь в диагностике сложных Windows-проблем</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- КОНТАКТЫ + ФОРМА -->
+        <section class="contact" id="contact">
+            <div class="container">
+                <div class="contact__grid">
+                    <div class="contact__cta reveal">
+                        <span class="eyebrow">Начнём?</span>
+                        <h2>Обсудим вашу задачу?</h2>
+                        <p>
+                            Опишите задачу или проблему — отвечу и предложу вариант решения.
+                        </p>
+
+                        <div class="contact__info">
+                            <a class="contact__info-item" href="#" aria-label="Сайт DevGeek.IT (адрес указать позже)">
+                                <span class="contact__info-icon" aria-hidden="true">🌐</span>
+                                <span>
+                                    <span class="contact__info-label">Сайт</span><br>
+                                    <span class="contact__info-value">DevGeek.IT</span>
+                                </span>
+                            </a>
+
+                            <!-- ✅ Карточка Email -->
+                            <a class="contact__info-item" href="mailto:DevGeek.IT@proton.me" aria-label="Написать на email DevGeek.IT">
+                                <span class="contact__info-icon contact__info-icon--email" aria-hidden="true">
+                                    <img
+                                        src="https://trace-logos.ru/assets/logos/svgs/proton-mail.svg"
+                                        alt=""
+                                        class="contact__email-logo"
+                                        loading="lazy"
+                                    >
+                                </span>
+                                <span>
+                                    <span class="contact__info-label">Email</span><br>
+                                    <span class="contact__info-value">DevGeek.IT@proton.me</span>
+                                </span>
+                            </a>
+
+                            <!-- ✅ Канал MAX -->
+                            <a
+                                class="contact__info-item"
+                                href="https://max.ru/channel_DevGeekIT"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Открыть канал DevGeek.IT в MAX"
+                            >
+                                <span class="contact__info-icon contact__info-icon--max" aria-hidden="true">
+                                    <img
+                                        src="https://trace-logos.ru/assets/logos/svgs/max.svg"
+                                        alt=""
+                                        class="contact__max-logo"
+                                        loading="lazy"
+                                    >
+                                </span>
+                                <span>
+                                    <span class="contact__info-label">Канал MAX</span><br>
+                                    <span class="contact__info-value">Подписаться на канал</span>
+                                    <span class="contact__info-note">Только чтение — публикации и новости</span>
+                                </span>
+                            </a>
+
+                            <!-- ✅ Чат MAX -->
+                            <a
+                                class="contact__info-item"
+                                href="https://max.ru/join/hYEYNbqt80uABpKRbTYQ0CYFy-RHRXJluNRuTSGqPDE"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Написать в общем чате для подписчиков MAX"
+                            >
+                                <span class="contact__info-icon contact__info-icon--max" aria-hidden="true">
+                                    <img
+                                        src="https://trace-logos.ru/assets/logos/svgs/max.svg"
+                                        alt=""
+                                        class="contact__max-logo"
+                                        loading="lazy"
+                                    >
+                                </span>
+                                <span>
+                                    <span class="contact__info-label">Чат MAX для подписчиков</span><br>
+                                    <span class="contact__info-value">Написать в общем чате</span>
+                                    <span class="contact__info-note">Доступно для подписчиков канала</span>
+                                </span>
+                            </a>
+                        </div>
+
+                        <div class="contact__actions">
+                            <!-- ✅ Кнопка «Написать письмо» -->
+                            <a href="mailto:DevGeek.IT@proton.me" class="btn btn--primary">
+                                <img
+                                    src="https://trace-logos.ru/assets/logos/svgs/proton-mail.svg"
+                                    alt=""
+                                    class="btn__email-logo"
+                                    aria-hidden="true"
+                                    loading="lazy"
+                                >
+                                Написать письмо
+                            </a>
+
+                            <!-- ✅ Кнопка «Написать в чат MAX» -->
+                            <a
+                                href="https://max.ru/join/hYEYNbqt80uABpKRbTYQ0CYFy-RHRXJluNRuTSGqPDE"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn btn--max"
+                            >
+                                <img
+                                    src="https://trace-logos.ru/assets/logos/svgs/max.svg"
+                                    alt=""
+                                    class="btn__max-logo"
+                                    aria-hidden="true"
+                                    loading="lazy"
+                                >
+                                Написать в чат MAX
+                            </a>
+                        </div>
+                    </div>
+
+                    <!--
+                        ============================================================================
+                        ФОРМА ОБРАТНОЙ СВЯЗИ С МНОГОУРОВНЕВОЙ ЗАЩИТОЙ ОТ СПАМА
+                        
+                        ✅ Уровень 1: Honeypot — скрытое поле "_gotcha".
+                        ✅ Уровень 2: Time-to-submit — поле "_ts" с меткой времени.
+                        ✅ Уровень 3: Контентный анализ — встроен в FormSubmit.
+                        ✅ Уровень 4: Rate limiting — встроен в FormSubmit.
+                        ✅ Уровень 5: Domain Allowlist — настраивается в панели FormSubmit.
+                        ✅ Уровень 6: Cloudflare Turnstile — невидимая капча.
+                        
+                        ⚠️ ВАЖНО: перед публикацией замените "YOUR_SITE_KEY" на ваш реальный
+                        Site Key из панели Cloudflare Turnstile. Secret Key вставляется
+                        в настройках FormSubmit (Settings → Captcha).
+                        ============================================================================
+                    -->
+                    <form
+                        class="contact-form reveal reveal-delay-2"
+                        id="contactForm"
+                        action="https://formsubmit.co/DevGeek.IT@proton.me"
+                        method="POST"
+                        novalidate
+                        aria-label="Форма обратной связи"
+                    >
+                        <!-- Служебные поля FormSubmit -->
+                        <input type="hidden" name="_subject" value="Новая заявка с сайта DevGeek.IT">
+                        <input type="hidden" name="_template" value="table">
+
+                        <!-- 🛡️ Уровень 1: Honeypot-ловушка -->
+                        <input type="text" name="_gotcha" class="form-honeypot" tabindex="-1" autocomplete="off">
+
+                        <!-- 🛡️ Уровень 2: Time-to-submit -->
+                        <input type="hidden" name="_ts" id="formTimestamp">
+
+                        <div class="form-group">
+                            <label for="nameInput">Имя</label>
+                            <input type="text" id="nameInput" name="name" placeholder="Как к вам обращаться" autocomplete="name">
+                            <span class="form-error" id="nameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emailInput">Email</label>
+                            <input type="email" id="emailInput" name="email" placeholder="example@mail.com" autocomplete="email">
+                            <span class="form-error" id="emailError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subjectInput">Тема</label>
+                            <input type="text" id="subjectInput" name="subject" placeholder="Кратко о задаче">
+                            <span class="form-error" id="subjectError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="messageInput">Сообщение</label>
+                            <textarea id="messageInput" name="message" placeholder="Опишите задачу подробнее"></textarea>
+                            <span class="form-error" id="messageError"></span>
+                        </div>
+
+                        <!-- 🛡️ Уровень 6: Cloudflare Turnstile (невидимая капча) -->
+                        <!-- <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div> -->
+
+                        <button type="submit" class="btn btn--primary btn--full" id="submitBtn">Отправить сообщение</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__brand">
+                    <span class="nav__logo">Dev<span>Geek</span>.IT</span>
+                    <p>Информационная безопасность Windows-сред, системное администрирование, автоматизация и разработка инструментов.</p>
+                </div>
+
+                <div class="footer__nav">
+                    <div class="footer__links-title">Разделы</div>
+                    <nav class="footer__links" aria-label="Навигация по разделам в подвале сайта">
+                        <a href="#about">Обо мне</a>
+                        <a href="#services">Услуги</a>
+                        <a href="#tech">Технологии</a>
+                    </nav>
+                </div>
+
+                <div class="footer__nav">
+                    <div class="footer__links-title">Ещё</div>
+                    <nav class="footer__links" aria-label="Дополнительная навигация в подвале сайта">
+                        <a href="#useful">Чем полезен</a>
+                        <a href="#contact">Контакты</a>
+
+                        <!-- ✅ Ссылка на email в подвале -->
+                        <a href="mailto:DevGeek.IT@proton.me">
+                            <img
+                                src="https://trace-logos.ru/assets/logos/svgs/proton-mail.svg"
+                                alt=""
+                                class="footer__email-logo"
+                                aria-hidden="true"
+                                loading="lazy"
+                            >
+                            Написать на email
+                        </a>
+
+                        <!-- ✅ Ссылка на MAX в подвале -->
+                        <a
+                            href="https://max.ru/join/hYEYNbqt80uABpKRbTYQ0CYFy-RHRXJluNRuTSGqPDE"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <img
+                                src="https://trace-logos.ru/assets/logos/svgs/max.svg"
+                                alt=""
+                                class="footer__max-logo"
+                                aria-hidden="true"
+                                loading="lazy"
+                            >
+                            Написать в MAX
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p>© <span id="currentYear"></span> DevGeek.IT — Информационная безопасность и разработка</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ✅ Плавающая кнопка MAX -->
+    <a
+        href="https://max.ru/join/hYEYNbqt80uABpKRbTYQ0CYFy-RHRXJluNRuTSGqPDE"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="max-fab"
+        aria-label="Написать в MAX"
+    >
+        <img
+            src="https://trace-logos.ru/assets/logos/svgs/max.svg"
+            alt=""
+            loading="lazy"
+        >
+    </a>
+
+    <button class="scroll-top" id="scrollTopBtn" aria-label="Прокрутить страницу наверх">↑</button>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* ==========================================================
+               🛡️ ЗАЩИТА ФОРМЫ: установка метки времени при загрузке
+            ========================================================== */
+            const formTimestamp = document.getElementById('formTimestamp');
+            if (formTimestamp) {
+                formTimestamp.value = Date.now();
+            }
+
+            /* 1. ШАПКА: эффект при прокрутке */
+            const header = document.getElementById('header');
+
+            function updateHeaderOnScroll() {
+                if (window.scrollY > 20) {
+                    header.classList.add('header--scrolled');
+                } else {
+                    header.classList.remove('header--scrolled');
+                }
+            }
+
+            window.addEventListener('scroll', updateHeaderOnScroll);
+            updateHeaderOnScroll();
+
+            /* 2. МОБИЛЬНОЕ МЕНЮ */
+            const navBurger = document.getElementById('navBurger');
+            const navList = document.getElementById('navList');
+            const navOverlay = document.getElementById('navOverlay');
+            const navLinks = document.querySelectorAll('[data-nav-link]');
+
+            function openMobileMenu() {
+                navList.classList.add('is-open');
+                navOverlay.classList.add('is-open');
+                navBurger.classList.add('is-active');
+                navBurger.setAttribute('aria-expanded', 'true');
+                navBurger.setAttribute('aria-label', 'Закрыть меню навигации');
+            }
+
+            function closeMobileMenu() {
+                navList.classList.remove('is-open');
+                navOverlay.classList.remove('is-open');
+                navBurger.classList.remove('is-active');
+                navBurger.setAttribute('aria-expanded', 'false');
+                navBurger.setAttribute('aria-label', 'Открыть меню навигации');
+            }
+
+            navBurger.addEventListener('click', () => {
+                const isOpen = navList.classList.contains('is-open');
+                isOpen ? closeMobileMenu() : openMobileMenu();
+            });
+
+            navOverlay.addEventListener('click', closeMobileMenu);
+
+            navLinks.forEach((link) => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+
+            /* 3. ПЛАВНАЯ ПРОКРУТКА */
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener('click', function (event) {
+                    const targetId = this.getAttribute('href');
+
+                    if (targetId.length <= 1) {
+                        return;
+                    }
+
+                    const targetEl = document.querySelector(targetId);
+                    if (targetEl) {
+                        event.preventDefault();
+                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            /* 4. АКТИВНАЯ ПОДСВЕТКА ПУНКТА МЕНЮ */
+            const sections = document.querySelectorAll('main section[id]');
+
+            const navObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach((link) => {
+                            link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                        });
+                    }
+                });
+            }, {
+                rootMargin: '-40% 0px -55% 0px',
+                threshold: 0
+            });
+
+            sections.forEach((section) => navObserver.observe(section));
+
+            /* 5. АНИМАЦИЯ ПОЯВЛЕНИЯ */
+            const revealElements = document.querySelectorAll('.reveal');
+
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15
+            });
+
+            revealElements.forEach((el) => revealObserver.observe(el));
+
+            /* 6. ЭФФЕКТ ПЕЧАТИ */
+            const typingTextEl = document.getElementById('typingText');
+            const rolesList = [
+                'Windows Security',
+                'Incident Analysis',
+                'PowerShell Automation',
+                'System Administration',
+                'Web & Desktop Development'
+            ];
+
+            let roleIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+
+            function typeEffectTick() {
+                const currentRole = rolesList[roleIndex];
+
+                if (isDeleting) {
+                    charIndex--;
+                    typingTextEl.textContent = currentRole.substring(0, charIndex);
+                } else {
+                    charIndex++;
+                    typingTextEl.textContent = currentRole.substring(0, charIndex);
+                }
+
+                let delay = isDeleting ? 45 : 90;
+
+                if (!isDeleting && charIndex === currentRole.length) {
+                    delay = 1600;
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    roleIndex = (roleIndex + 1) % rolesList.length;
+                    delay = 300;
+                }
+
+                setTimeout(typeEffectTick, delay);
+            }
+
+            typeEffectTick();
+
+            /* 7. КНОПКА НАВЕРХ */
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+            window.addEventListener('scroll', () => {
+                scrollTopBtn.classList.toggle('is-visible', window.scrollY > 500);
+            });
+
+            scrollTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            /* 8. TOAST */
+            const toast = document.getElementById('toast');
+            let toastTimeoutId = null;
+
+            function showToast(message, isError = false) {
+                toast.textContent = message;
+                toast.classList.toggle('toast--error', isError);
+                toast.classList.add('is-visible');
+
+                clearTimeout(toastTimeoutId);
+                toastTimeoutId = setTimeout(() => {
+                    toast.classList.remove('is-visible');
+                }, 5000);
+            }
+
+            /* 9. ВАЛИДАЦИЯ И ОТПРАВКА ФОРМЫ (с AJAX) */
+            const contactForm = document.getElementById('contactForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const nameInput = document.getElementById('nameInput');
+            const emailInput = document.getElementById('emailInput');
+            const subjectInput = document.getElementById('subjectInput');
+            const messageInput = document.getElementById('messageInput');
+
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+            const subjectError = document.getElementById('subjectError');
+            const messageError = document.getElementById('messageError');
+
+            function isValidEmail(value) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailPattern.test(value.trim());
+            }
+
+            function setFieldError(inputEl, errorEl, message) {
+                if (message) {
+                    inputEl.classList.add('is-invalid');
+                    errorEl.textContent = message;
+                } else {
+                    inputEl.classList.remove('is-invalid');
+                    errorEl.textContent = '';
+                }
+            }
+
+            function validateForm() {
+                let isFormValid = true;
+
+                if (nameInput.value.trim().length < 2) {
+                    setFieldError(nameInput, nameError, 'Пожалуйста, укажите ваше имя (минимум 2 символа).');
+                    isFormValid = false;
+                } else {
+                    setFieldError(nameInput, nameError, '');
+                }
+
+                if (emailInput.value.trim() === '') {
+                    setFieldError(emailInput, emailError, 'Пожалуйста, укажите email для обратной связи.');
+                    isFormValid = false;
+                } else if (!isValidEmail(emailInput.value)) {
+                    setFieldError(emailInput, emailError, 'Проверьте корректность email-адреса.');
+                    isFormValid = false;
+                } else {
+                    setFieldError(emailInput, emailError, '');
+                }
+
+                if (subjectInput.value.trim() === '') {
+                    setFieldError(subjectInput, subjectError, 'Укажите краткую тему обращения.');
+                    isFormValid = false;
+                } else {
+                    setFieldError(subjectInput, subjectError, '');
+                }
+
+                if (messageInput.value.trim().length < 10) {
+                    setFieldError(messageInput, messageError, 'Сообщение должно содержать не менее 10 символов.');
+                    isFormValid = false;
+                } else {
+                    setFieldError(messageInput, messageError, '');
+                }
+
+                return isFormValid;
+            }
+
+            contactForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                if (!validateForm()) {
+                    showToast('Пожалуйста, проверьте правильность заполнения полей формы.', true);
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Отправка...';
+
+                try {
+                    const formData = new FormData(contactForm);
+
+                    // AJAX-эндпоинт FormSubmit — возвращает JSON, не перезагружает страницу
+                    const response = await fetch('https://formsubmit.co/ajax/DevGeek.IT@proton.me', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        showToast('Спасибо! Ваше сообщение отправлено на почту.');
+                        contactForm.reset();
+
+                        // Обновляем метку времени после успешной отправки
+                        if (formTimestamp) {
+                            formTimestamp.value = Date.now();
+                        }
+
+                        // Сбрасываем виджет Turnstile, если он был использован
+                        if (typeof turnstile !== 'undefined') {
+                            turnstile.reset();
+                        }
+
+                        [nameInput, emailInput, subjectInput, messageInput].forEach((inputEl) => {
+                            inputEl.classList.remove('is-invalid');
+                        });
+                        [nameError, emailError, subjectError, messageError].forEach((errorEl) => {
+                            errorEl.textContent = '';
+                        });
+                    } else {
+                        showToast('Не удалось отправить сообщение. Попробуйте позже или напишите на почту напрямую.', true);
+                    }
+                } catch (networkError) {
+                    showToast('Ошибка соединения. Проверьте интернет и попробуйте снова.', true);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Отправить сообщение';
+                }
+            });
+
+            /* 10. ТЕКУЩИЙ ГОД */
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
